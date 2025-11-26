@@ -172,7 +172,7 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
     }else{
         for(int i = 0; i < cantidadCelulares; i++){
             for(int j = 0; j < 5; j++){
-                printf("HOLA MUNDO");
+                printf("HOLA MUNDO!!");
             }
         }
     }
