@@ -18,7 +18,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
 int main(){
 
-    int cantidadCelulares, idAVender, opcion;
+    int cantidadCelulares = 0, idAVender, opcion;
     float datos[cantidadCelulares][5];
     char marcaCelular [cantidadCelulares][25];
     char aplicarFiltro;
