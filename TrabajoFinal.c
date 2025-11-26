@@ -47,7 +47,8 @@ int main(){
             case 6:
                 printf("\nSaliendo");
                 for (int i = 0; i < 3; i++){
-                    printf(". ");
+                    printf(" . ");
+                    sleep(1);
                 }
                 break;
         }
