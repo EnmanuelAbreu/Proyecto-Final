@@ -7,6 +7,12 @@
 #define VENDIDO 1
 #define NO_VENDIDO 0
 
+#define ID 0
+#define DISCO 1
+#define MEMORIA_RAM 2
+#define PRECIO 3
+#define VENTA 4
+
 int menu();
 void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]);
 int SelecionarCelularDeUnaLista (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]);
@@ -39,6 +45,10 @@ int main(){
             case 2:
                 break;
             case 3:
+                printf("Si desea aplicar un filtro, favor introducir S: ");
+                scanf(" %c", &aplicarFiltro);
+                ConsultarInventarioCelulares(cantidadCelulares, datos, marcaCelular, aplicarFiltro);
+
                 break;
             case 4:
                 break;
@@ -112,6 +122,7 @@ void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5],
         int idRepetido;
 
         // VALIDAR ID NO REPETIDO
+        // ID
         do {
             idRepetido = 0;
             printf("ID: ");
@@ -126,17 +137,18 @@ void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5],
             }
         } while (idRepetido == 1);
 
-        datos[registrados][0] = id;  // Guardar ID
+        datos[registrados][0] = id;
 
+        // Marca
         printf("Marca: ");
-        fflush(stdin);
+        getchar();  // <-- ESTA LÍNEA SOLUCIONA TU PROBLEMA
         fgets(marcaCelular[registrados], 25, stdin);
-
-        // Eliminar salto de línea de fgets
         marcaCelular[registrados][strcspn(marcaCelular[registrados], "\n")] = '\0';
 
+        // Almacenamiento
         printf("Almacenamiento (GB): ");
         scanf("%f", &datos[registrados][1]);
+
 
         printf("Memoria RAM (GB): ");
         scanf("%f", &datos[registrados][2]);
@@ -159,22 +171,193 @@ void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5],
 
 
 void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], char aplicarFiltro){
-    char aplicarFiltro;
+   char letraVendido[5];
+   float montoTotal_Inventario = 0.00;
+   float montoTotal_Registrado = 0.00;
+   float Total_Vendido = 0.00;
+   float AlmacenamientoEspecificado = 0, RAMEspecificada = 0, Precio_VentaEspecificado = 0;
+
+
+
     printf("************************************* I N V E N T A R I O  D E  C E L U L A R E S **************************************\n");
+          
+    if(aplicarFiltro == 's' || aplicarFiltro == 'S'){
+        //! Titulos de la funcion
+        printf("A continuaci%cn especificar los datos por los que desea filtrar. \n", 162);
+        printf("**** Si no desea filtrar por alguno de ellos, especificar -1. **** \n");
 
-    printf("Si desea aplicar un filtro, favor introducir S: ");
-    scanf(" %c", &aplicarFiltro);
+        //!Especificaciones para el filtrado
+        printf("Almacenamiento(GB): ");
+        scanf("%f", &AlmacenamientoEspecificado);
+        printf("Memoria RAM(GB): ");
+        scanf("%f", &RAMEspecificada);
+        printf("Precio Venta: ");
+        scanf("%f", &Precio_VentaEspecificado);
 
-    printf("%-6s %9s %20s %8s %6s %9s %9s\n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
-    printf("------------------------------------------------------------------------------------------\n");
-    if(aplicarFiltro == 'S'){
+        printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
+        printf("------------------------------------------------------------------------------------------\n");
 
+        //!Condicion cuando solo se especifica el Almacenamiento
+        if((AlmacenamientoEspecificado > 0) && ((RAMEspecificada < 0) && (Precio_VentaEspecificado < 0))){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if(AlmacenamientoEspecificado == datos[i][DISCO]){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+                 //! Condicion cunado se especifica ALmacenamiento y Ram
+        }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado < 0)){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if((AlmacenamientoEspecificado == datos[i][DISCO] && RAMEspecificada == datos[i][MEMORIA_RAM])){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+                //!Condicion para cuando se cumple las 3 especificaciones
+        }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado > 0)){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if((AlmacenamientoEspecificado == datos[i][DISCO]) && (RAMEspecificada == datos[i][MEMORIA_RAM] && Precio_VentaEspecificado == datos[i][PRECIO])){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+                //!Condicion cuando se cumple solo la Ram
+        }else if((RAMEspecificada > 0) && ((AlmacenamientoEspecificado < 0) || (Precio_VentaEspecificado < 0))){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if(RAMEspecificada == datos[i][MEMORIA_RAM]){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+                //!Condicion cuando se cumple Ram y Precio
+        }else if((RAMEspecificada > 0) && (Precio_VentaEspecificado > 0) && (AlmacenamientoEspecificado < 0)){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if((Precio_VentaEspecificado == datos[i][PRECIO] && RAMEspecificada == datos[i][MEMORIA_RAM])){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+                //!Condicion para cuando se cumple solo el Precio
+        }else if((Precio_VentaEspecificado > 0) && ((AlmacenamientoEspecificado < 0) || (RAMEspecificada < 0))){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if(Precio_VentaEspecificado == datos[i][PRECIO]){
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+        }
     }else{
+        printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
+        printf("------------------------------------------------------------------------------------------\n");
         for(int i = 0; i < cantidadCelulares; i++){
-            for(int j = 0; j < 5; j++){
+            //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+            montoTotal_Registrado += datos[i][PRECIO];
+            if(datos[i][VENTA] == VENDIDO){
+                Total_Vendido += datos[i][PRECIO];
+            }else{
+                montoTotal_Inventario += datos[i][PRECIO];
+            }
+            //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+            if(datos[i][VENTA] == VENDIDO){
+                strcpy(letraVendido, "S");
+            }else{
+                strcpy(letraVendido, "N");
+            }
+            
+            //! Evaluamos que haiga datos dentro de esa fila
+            if(datos[i][ID] == 0){
                 printf("");
+            }else{
+                printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
             }
         }
     }
     printf("------------------------------------------------------------------------------------------\n");
+    printf("Monto Total Registrado: %25.2f \n", montoTotal_Registrado); 
+    printf("Monto Total Inventario: %25.2f \n", montoTotal_Inventario); 
+    printf("Total Vendido:          %25.2f \n", Total_Vendido); 
 }

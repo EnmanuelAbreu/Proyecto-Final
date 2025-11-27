@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "conio.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "compare": "c",
+        "cmath": "c"
     }
 }
