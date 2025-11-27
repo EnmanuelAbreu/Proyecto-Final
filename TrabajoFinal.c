@@ -24,7 +24,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
 int main(){
 
-    int cantidadCelulares = 0, idAVender, opcion;
+    int cantidadCelulares, idAVender, opcion;
     float datos[cantidadCelulares][5];
     char marcaCelular [cantidadCelulares][25];
     char aplicarFiltro;
@@ -57,8 +57,7 @@ int main(){
             case 6:
                 printf("\nSaliendo");
                 for (int i = 0; i < 3; i++){
-                    printf(" . ");
-                    sleep(1);
+                    printf(". ");
                 }
                 break;
         }
@@ -200,6 +199,7 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
         //!Condicion cuando solo se especifica el Almacenamiento
         if((AlmacenamientoEspecificado > 0) && ((RAMEspecificada < 0) && (Precio_VentaEspecificado < 0))){
+
             for(int i = 0; i < cantidadCelulares; i++){
                 if(AlmacenamientoEspecificado == datos[i][DISCO]){
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
@@ -335,8 +335,25 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
         printf("------------------------------------------------------------------------------------------\n");
         for(int i = 0; i < cantidadCelulares; i++){
-            for(int j = 0; j < 5; j++){
+            //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+            montoTotal_Registrado += datos[i][PRECIO];
+            if(datos[i][VENTA] == VENDIDO){
+                Total_Vendido += datos[i][PRECIO];
+            }else{
+                montoTotal_Inventario += datos[i][PRECIO];
+            }
+            //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+            if(datos[i][VENTA] == VENDIDO){
+                strcpy(letraVendido, "S");
+            }else{
+                strcpy(letraVendido, "N");
+            }
+            
+            //! Evaluamos que haiga datos dentro de esa fila
+            if(datos[i][ID] == 0){
                 printf("");
+            }else{
+                printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
             }
         }
     }
