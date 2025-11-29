@@ -230,6 +230,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado < 0)){
             for(int i = 0; i < cantidadCelulares; i++){
                 if((AlmacenamientoEspecificado == datos[i][DISCO] && RAMEspecificada == datos[i][MEMORIA_RAM])){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
@@ -255,6 +258,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado > 0)){
             for(int i = 0; i < cantidadCelulares; i++){
                 if((AlmacenamientoEspecificado == datos[i][DISCO]) && (RAMEspecificada == datos[i][MEMORIA_RAM] && Precio_VentaEspecificado == datos[i][PRECIO])){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+                    
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
@@ -280,6 +286,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         }else if((RAMEspecificada > 0) && ((AlmacenamientoEspecificado < 0) || (Precio_VentaEspecificado < 0))){
             for(int i = 0; i < cantidadCelulares; i++){
                 if(RAMEspecificada == datos[i][MEMORIA_RAM]){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+                    
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
@@ -305,6 +314,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         }else if((RAMEspecificada > 0) && (Precio_VentaEspecificado > 0) && (AlmacenamientoEspecificado < 0)){
             for(int i = 0; i < cantidadCelulares; i++){
                 if((Precio_VentaEspecificado == datos[i][PRECIO] && RAMEspecificada == datos[i][MEMORIA_RAM])){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+                 
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
@@ -330,6 +342,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
         }else if((Precio_VentaEspecificado > 0) && ((AlmacenamientoEspecificado < 0) || (RAMEspecificada < 0))){
             for(int i = 0; i < cantidadCelulares; i++){
                 if(Precio_VentaEspecificado == datos[i][PRECIO]){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+                   
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
