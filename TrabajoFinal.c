@@ -25,7 +25,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
 int main(){
 
-    int cantidadCelulares, idAVender, opcion;
+    int cantidadCelulares = 0, idAVender, opcion;
     int opcionVentas, verificar;
     float datos[MAX][5];
     char marcaCelular [MAX][25];
