@@ -357,7 +357,49 @@ int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos
     return idAVender;
 }
 
-void venderCelulares(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], int idAVender){}
+void venderCelulares(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], int idAVender){
+
+    char confirmar;
+    int indice = -1;
+
+    for (int i = 0; i < cantidadCelulares; i++){    //bucle para buscar en que posicion esta en ID del celular a vender
+        if (datos[i][ID] == idAVender){
+            indice = i;
+            break;
+        }
+    }
+    if (indice == -1){
+        printf("\nEl ID no fue encontrado\n");  //en caso de no encontrar el ID
+        return;
+    }
+    printf("\nAcontinuaci%cn los datos del celular seleccionado y monto a pagar:\n", 162);  //mostrar los datos del celular selecionado
+    printf("%-12s %25s %12s %10s %20s\n", "ID", "Marca", "Disco", "RAM", "Precio");
+    printf("\n--------------------------------------------------------------------------------------------\n");
+    printf("%-12.0f %25s %12.2f %10.2f %20.2f\n", datos[indice][ID], marcaCelular[indice], datos[indice][DISCO], datos[indice][MEMORIA_RAM], datos[indice][PRECIO]);
+    printf("--------------------------------------------------------------------------------------------\n");
+    printf("%-20s %10.2f", "Total a Pagar", datos[indice][PRECIO]);
+
+    do {
+        printf("\nDesea completar la compra? (S/N): "); //confirmar la compra
+        fflush(stdin);
+        scanf(" %c", &confirmar);
+        confirmar = toupper(confirmar);
+        if (confirmar != 'S' && confirmar != 'N'){
+            printf("Debe introducir S para confirmar o N para cancelar\n");
+        }
+    } while (confirmar != 'S' && confirmar != 'N');
+
+
+    if (confirmar == 'S'){
+        datos[indice][VENTA] = VENDIDO;     //cambiar el estado del celular al vendido
+        printf("\n\nCompra registrada exitosamente!!\n");
+    } else if (confirmar == 'N'){
+        printf("\nLa compra ha sido cancelada\n");
+        return;
+    }
+
+}
+
 
 
 void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], char aplicarFiltro){
