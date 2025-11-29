@@ -366,7 +366,35 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
             if(especificacionEncontrada != 1){
                 printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
             }
-        }
+                //!Condicion cunado se cumple Almacenamiento y Precio
+        }else if((AlmacenamientoEspecificado > 0) && (Precio_VentaEspecificado > 0) && (RAMEspecificada < 0)){
+            for(int i = 0; i < cantidadCelulares; i++){
+                if(Precio_VentaEspecificado == datos[i][PRECIO] && AlmacenamientoEspecificado == datos[i][DISCO]){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+                   
+                    //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
+                    if(datos[i][VENTA] == VENDIDO){
+                        strcpy(letraVendido, "S");
+                    }else{
+                        strcpy(letraVendido, "N");
+                    }
+                    
+                    //!Calculando todo lo ultimo (Inventario, Total Vendido, Registrado)
+                    montoTotal_Registrado += datos[i][PRECIO];
+                    if(datos[i][VENTA] == VENDIDO){
+                        Total_Vendido += datos[i][PRECIO];
+                    }else{
+                        montoTotal_Inventario += datos[i][PRECIO];
+                    }
+
+                    printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
+                }
+            }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
+            }
+        } 
     }else if(aplicarFiltro == 'n' || aplicarFiltro == 'N'){
         printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
         printf("------------------------------------------------------------------------------------------\n");
