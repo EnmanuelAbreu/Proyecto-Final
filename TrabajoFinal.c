@@ -275,6 +275,89 @@ int SelecionarCelularDeUnaLista (int cantidadCelulares, float datos[cantidadCelu
 
 }
 
+int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]){
+
+    float maxPrecio, minDisco, minRAM;
+    int idAVender, idValido;
+    int encontrados[2];     // Guarda los indices de los 2 mejores celulares
+    int cantEncontrados = 0;
+
+    printf("Favor introducir el m%cnimo permitido para las siguientes caracter%csticas: \n", 161, 161);
+    printf("Mayor Precio Permitido: ");
+    while (scanf("%f", &maxPrecio) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+    printf("Menor ALmacenamiento Permitido(GB): ");             //validar datos y pedir minimos y maximos para buscar las recomendaciones
+    while (scanf("%f", &minDisco) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+    printf("Menor RAM Permitida(GB): ");
+    while (scanf("%f", &minRAM) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+
+
+
+    for (int i = 0; i < cantidadCelulares; i++){
+
+        if (datos[i][VENTA] == NO_VENDIDO && datos[i][PRECIO] <= maxPrecio && datos[i][DISCO] >= minDisco && datos[i][MEMORIA_RAM] >= minRAM){
+            encontrados[cantEncontrados] = i;
+            cantEncontrados++;
+            if (cantEncontrados == 2) {
+                break;  // detiene el bucle para solo dejar los 2 con estas caracteristicas
+            }
+        }
+    }
+    if (cantEncontrados == 0){      //si ninguno cumple
+        printf("\nNo se encontraron celulares con esas caracter%csticas.\n", 161);
+        return -1;
+    }
+
+    // mostrar los resultados
+    printf("\n%-12s %25s %12s %10s %20s\n", "ID", "Marca", "Disco", "RAM", "Precio");
+    printf("--------------------------------------------------------------------------------------------\n");
+
+    for (int j = 0; j < cantEncontrados; j++){
+        int indiceCelular = encontrados[j];
+        printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",
+            datos[indiceCelular][ID], marcaCelular[indiceCelular], datos[indiceCelular][DISCO],
+            datos[indiceCelular][MEMORIA_RAM], datos[indiceCelular][PRECIO]);
+    }
+
+    printf("--------------------------------------------------------------------------------------------\n");
+
+    while (1){  //bucle para validar el ID
+        printf("Favor especificar el ID del celular que desea o -1 para cancelar la compra: ");
+        while (scanf("%d", &idAVender) != 1) {
+            printf("Debe introducir un n%cmero\n", 163);
+            fflush(stdin);
+        }
+        if (idAVender == -1){
+            return -1;
+        }
+        idValido = 0;
+
+        for (int j = 0; j < cantEncontrados; j++){
+            int indiceCelular = encontrados[j];
+
+            if (datos[indiceCelular][ID] == idAVender){
+                idValido = 1;           //confirmar que el ID introducido esta dentro de las opciones
+                break;
+            }
+        }
+        if (idValido == 1){
+            break;}
+
+        printf("Ese ID no existe dentro de las opciones. Intente de nuevo\n\n");
+    }
+
+    return idAVender;
+}
+
+
 void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], char aplicarFiltro){
    char letraVendido[5];
    float montoTotal_Inventario = 0.00;
