@@ -12,6 +12,7 @@
 #define MEMORIA_RAM 2
 #define PRECIO 3
 #define VENTA 4
+#define MAX 1000
 
 int menu();
 void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]);
@@ -24,16 +25,13 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
 int main(){
 
-    int cantidadCelulares, idAVender, opcion;
+    int cantidadCelulares = 0, idAVender, opcion;
     int opcionVentas, verificar;
-    float datos[cantidadCelulares][5];
-    char marcaCelular [cantidadCelulares][25];
+    float datos[MAX][5];
+    char marcaCelular [MAX][25];
     char aplicarFiltro;
 
     memset(datos, 0, sizeof(datos));
-
-    printf("Ingrese la cantidad de Celulares: ");
-    scanf("%d", &cantidadCelulares);
 
     do{
         opcion = menu();
@@ -41,7 +39,28 @@ int main(){
         switch (opcion){
 
             case 1:
-                RegistrarCelular(cantidadCelulares, datos, marcaCelular);
+               if(cantidadCelulares == 0){
+                    do{
+                        printf("Favor introduzca la cantidad total de celulares a registrar: ");
+                        if(scanf("%d", &cantidadCelulares) != 1)
+                        {
+                            printf("Debe ingresar un n%cmero!!!!\n\n",163);
+                            int c;
+                            // Limpia el buffer de entrada leyendo y descartando todos los caracteres
+                            // hasta encontrar un salto de línea (ENTER) o el fin del archivo (EOF).
+                            while ((c = getchar()) != '\n' && c != EOF);
+
+                            cantidadCelulares = 0;
+                            continue;
+                        }
+                        if(cantidadCelulares < 1)
+                        {
+                            printf("Valor invalido\n\n");
+                            cantidadCelulares = 0;
+                        }
+                    }while(cantidadCelulares < 1);
+                    }
+                    RegistrarCelular(cantidadCelulares, datos, marcaCelular);
                 break;
             case 2:
                 printf("\n************ V E N T A  D E  C E L U L A R E S ************\n");
@@ -145,73 +164,210 @@ int menu(){
     return opcion;
 }
 
-void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5], 
-                       char marcaCelular[cantidadCelulares][25]) 
-                       
+void RegistrarCelular(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25])
 {
-    static int registrados = 0;  // Para recordar cuántos se han ingresado anteriormente
-    char opcion;
+    char continuarRegistrando;
+    static int registrados = 0;
 
-    do {
-        if (registrados == cantidadCelulares) {
-            printf("Ya se ha registrado la cantidad maxima de celulares (%d).\n", cantidadCelulares);
-            return;
-        }
+    printf("\n****** R E G I S T R O  C E L U L A R E S ******\n");
+    /en caso de que ya se hayan resgistrado la cantidad de celulares que el usuario ingreso y quiera seguir poniendo mas/
+    if(registrados >= cantidadCelulares)
+    {
+        printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",161);
+        return;
+    }
+    /bucle para resgisgrar los celulares/
+    for(int i = registrados; i < cantidadCelulares; i++)
+    {
+        /Esto lo declare para usarlo la comprobacion del id/
+        float idTemporal;
+        int validarEntrada;
+        char respuestaID;
 
-        printf("\n************ R E G I S T R O   C E L U L A R E S ************\n");
-        printf("Introducir los datos del celular No. %d\n", registrados + 1);
+        printf("\nIntroducir los datos del celular No. %d\n", i+1);
 
-        int id;
-        int idRepetido;
-
-        // VALIDAR ID NO REPETIDO
-        // ID
-        do {
-            idRepetido = 0;
+        while(1)
+        {
+            /Validar ID/
             printf("ID: ");
-            scanf("%d", &id);
-
-            for (int i = 0; i < registrados; i++) {
-                if ((int)datos[i][0] == id) {
-                    printf("ERROR: El ID ya existe, introduzca otro.\n");
-                    idRepetido = 1;
+            validarEntrada = scanf("%f", &idTemporal);
+            /Verificar que el usuario introduzca un numero/
+            if(validarEntrada != 1)
+            {
+                printf("Entrada inv%clida. Debe ingresar un n%cmero para el ID.\n", 160, 163);
+                int ch; while ((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            /Verificar que el ID no este repetido/
+            int repetido = 0;
+            for(int j = 0; j < registrados; j++)
+            {
+                if(datos[j][ID] == idTemporal)
+                {
+                    repetido = 1;
                     break;
                 }
             }
-        } while (idRepetido == 1);
+            if(repetido != 1)
+            {
+                /* ID válido y no repetido -> salir del loop */
+                break;
+            }
+            while(1)
+            {
+                int ch;
+                /si el id esta repetido: preguntar al usuario si quiere ingresar otro ID diferente o salir/
+                while ((ch = getchar()) != '\n' && ch != EOF);
+                printf("ID: %.0f ha sido especificado previamente\n",idTemporal);
+                printf("%cDesea especificar otro ID(S/N)?: ",168);
+                if(scanf(" %c", &respuestaID) != 1)
+                {
+                    /* lectura fallida: limpiar y repetir */
+                    while ((ch = getchar()) != '\n' && ch != EOF);
+                    continue;
+                }
+                respuestaID = toupper(respuestaID);
+                while ((ch = getchar()) != '\n' && ch != EOF);
+                /Si responde si el programa le pregunta el id de nuevo como el profe lo pidio/
+                if(respuestaID == 'S')
+                {
+                    break;
+                }
+                /Si responde que no el programa sale de la funcion/
+                else if(respuestaID == 'N')
+                {
+                    return;
+                }
+                else
+                {
+                    /verificar que el usuario responde con S o N, de lo contrario vuelve a preguntar/
+                     printf("Respuesta inv%clida. Responda 'S' o 'N'.\n", 160);
+                     continue;
+                }
+            }
+        }
+        /aqui se completa la parte del arreglo de id/
+        datos[i][ID] = idTemporal;
 
-        datos[registrados][0] = id;
-
-        // Marca
         printf("Marca: ");
-        getchar();  // <-- ESTA LÍNEA SOLUCIONA TU PROBLEMA
-        fgets(marcaCelular[registrados], 25, stdin);
-        marcaCelular[registrados][strcspn(marcaCelular[registrados], "\n")] = '\0';
+        scanf("%24s", marcaCelular[i]);
 
-        // Almacenamiento
-        printf("Almacenamiento (GB): ");
-        scanf("%f", &datos[registrados][1]);
+        /Validacion para el almacenamiento/
+        float almacenamientoTemporal;
+        while(1)
+        {
+            printf("Almacenamiento(GB): ");
+            validarEntrada = scanf("%f", &almacenamientoTemporal);
 
+            /aqui verificamos que el usuario no introduzca una letra/
+            if(validarEntrada != 1)
+            {
+                printf("Respuesta inv%clida. Debe ingresar un n%cmero.\n", 160, 163);
+                int ch;
+                while ((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            /aqui verificamos que el numero introducido por el usuario sea positivo/
+            if(almacenamientoTemporal <= 0)
+            {
+                printf("El almacenamiento debe ser un n%cmero positivo.\n", 163);
+                int ch;
+                while ((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            break;
+        }
+        /Aqui se llena el arrglo del almacenamiento/
+        datos[i][DISCO] = almacenamientoTemporal;
 
-        printf("Memoria RAM (GB): ");
-        scanf("%f", &datos[registrados][2]);
+        /validacion de memoria ram/
+        float memoriaRamTemporal;
+        while(1)
+        {
+            printf("Memoria RAM(GB): ");
+            validarEntrada = scanf("%f", &memoriaRamTemporal);
 
-        printf("Precio de Venta: ");
-        scanf("%f", &datos[registrados][3]);
+            /verificamos que el usuario introduzca un numero/
+            if(validarEntrada != 1)
+            {
+                printf("Respuesta inv%clida, debe introducir un n%cmero\n", 160, 163);
+                int ch;
+                while((ch = getchar()) != '\n' && ch != EOF); //Limpiar buffer
+                continue;
+            }
+            /verificamos que el usuario introduzca un numero positivo/
+            if(memoriaRamTemporal <= 0)
+            {
+                printf("La memoria RAM debe ser un n%cmero positivo\n", 163);
+                int ch;
+                while((ch = getchar()) != '\n' && ch != EOF); // Limpiar buffer
+                continue;
+            }
+            break;
+        }
+        /llenamos el arreglo de memoria ram/
+        datos[1][MEMORIA_RAM] = memoriaRamTemporal;
 
+        /validacion de precio de venta/
+        float precioTemporal;
+        while(1)
+        {
+            printf("Precio de Venta: ");
+            validarEntrada = scanf("%f", &precioTemporal);
+
+            if(validarEntrada != 1)
+            {
+                printf("Respuesta inv%clida, debe introducir un n%cmero\n", 160, 163);
+                int ch;
+                while((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            if(precioTemporal <= 0)
+            {
+                printf("El precio debe ser un n%cmero positivo\n",163);
+                int ch;
+                while((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            break;
+        }
+        datos[i][PRECIO] = precioTemporal;
+
+        /*en esta variable estatica llevamos el conteo de los celulares registrados
+        sin que se pierda la informacion en caso de que el usuario decida salir de la funcion*/
         registrados++;
 
-        // Preguntar si desea registrar otro
-        do {
-            printf("\n¿Desea registrar otro celular (S/N)?: ");
-            fflush(stdin);
-            scanf("%c", &opcion);
-            opcion = toupper(opcion);
-        } while (opcion != 'S' && opcion != 'N');
+        do
+        {
+            printf("Desea registrar otro celular(S/N)?: ");
+            //getchar();
+            scanf(" %c", &continuarRegistrando);
+            continuarRegistrando = toupper(continuarRegistrando);
+            /En caso de que el usario introduzca algo que no es S o N/
+            if(continuarRegistrando != 'S' && continuarRegistrando != 'N')
+            {
+                printf("\nrepuesta invalida, Por favor responda (S/N)\n");
+                int ch;
+                while ((ch = getchar()) != '\n' && ch != EOF);
+            }
+        } while(continuarRegistrando != 'S' && continuarRegistrando != 'N');
 
-    } while (opcion == 'S');
+        if(continuarRegistrando == 'N')
+        {
+            return;
+        }
+        if(continuarRegistrando == 'S')
+        {
+            /en caso de que ya el usuario haya resgistrado la cantidad maxima de celulares permitidos/
+            if(registrados >= cantidadCelulares)
+            {
+                printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",161);
+                return;
+            }
+            continue;
+        }
+    }
 }
-
 int SelecionarCelularDeUnaLista (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]){
 
     char marca[25];
@@ -357,6 +513,50 @@ int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos
 
     return idAVender;
 }
+
+void venderCelulares(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], int idAVender){
+
+    char confirmar;
+    int indice = -1;
+
+    for (int i = 0; i < cantidadCelulares; i++){    //bucle para buscar en que posicion esta en ID del celular a vender
+        if (datos[i][ID] == idAVender){
+            indice = i;
+            break;
+        }
+    }
+    if (indice == -1){
+        printf("\nEl ID no fue encontrado\n");  //en caso de no encontrar el ID
+        return;
+    }
+    printf("\nAcontinuaci%cn los datos del celular seleccionado y monto a pagar:\n", 162);  //mostrar los datos del celular selecionado
+    printf("%-12s %25s %12s %10s %20s\n", "ID", "Marca", "Disco", "RAM", "Precio");
+    printf("\n--------------------------------------------------------------------------------------------\n");
+    printf("%-12.0f %25s %12.2f %10.2f %20.2f\n", datos[indice][ID], marcaCelular[indice], datos[indice][DISCO], datos[indice][MEMORIA_RAM], datos[indice][PRECIO]);
+    printf("--------------------------------------------------------------------------------------------\n");
+    printf("%-20s %10.2f", "Total a Pagar", datos[indice][PRECIO]);
+
+    do {
+        printf("\nDesea completar la compra? (S/N): "); //confirmar la compra
+        fflush(stdin);
+        scanf(" %c", &confirmar);
+        confirmar = toupper(confirmar);
+        if (confirmar != 'S' && confirmar != 'N'){
+            printf("Debe introducir S para confirmar o N para cancelar\n");
+        }
+    } while (confirmar != 'S' && confirmar != 'N');
+
+
+    if (confirmar == 'S'){
+        datos[indice][VENTA] = VENDIDO;     //cambiar el estado del celular al vendido
+        printf("\n\nCompra registrada exitosamente!!\n");
+    } else if (confirmar == 'N'){
+        printf("\nLa compra ha sido cancelada\n");
+        return;
+    }
+
+}
+
 
 
 void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], char aplicarFiltro){
