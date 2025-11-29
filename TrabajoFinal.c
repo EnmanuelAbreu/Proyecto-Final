@@ -306,7 +306,7 @@ void RegistrarCelular(int cantidadCelulares, float datos[cantidadCelulares][5], 
             break;
         }
         //llenamos el arreglo de memoria ram/
-        datos[1][MEMORIA_RAM] = memoriaRamTemporal;
+        datos[i][MEMORIA_RAM] = memoriaRamTemporal;
 
         //validacion de precio de venta/
         float precioTemporal;
