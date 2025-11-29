@@ -25,6 +25,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 int main(){
 
     int cantidadCelulares, idAVender, opcion;
+    int opcionVentas, verificar;
     float datos[cantidadCelulares][5];
     char marcaCelular [cantidadCelulares][25];
     char aplicarFiltro;
@@ -43,6 +44,48 @@ int main(){
                 RegistrarCelular(cantidadCelulares, datos, marcaCelular);
                 break;
             case 2:
+                printf("\n************ V E N T A  D E  C E L U L A R E S ************\n");
+                    printf("\nFavor selecionar una de las siguientes opciones:\n");
+                    printf("1. Seleccionar celular de una lista\n");
+                    printf("2. Recomendar un celular basado en su Preferencia\n");
+                    printf("3. Cancelar Venta\n");
+
+                    do {
+                        printf("\nSeleccione una opci%cn: ", 162);
+                        verificar = scanf("%d", &opcionVentas);
+                         if (verificar != 1){
+                            printf("Debe introducir un n%cmero\n\n", 163);
+                            fflush(stdin);
+                            continue;
+                        }
+                        if (opcionVentas < 1 || opcionVentas > 3){
+                            printf("Debe introducir una de las opciones disponibles\n\n");
+                        }
+                    }while(verificar != 1 || opcionVentas < 1 || opcionVentas > 3);
+
+
+                    if (opcionVentas == 1){
+                        idAVender = SelecionarCelularDeUnaLista (cantidadCelulares, datos,marcaCelular);
+                    }else if (opcionVentas == 2){
+                        idAVender = RecomendarUnCelulaBasadoEnSusPreferencias(cantidadCelulares ,datos ,marcaCelular);
+                    }else if (opcionVentas == 3){
+                        printf("\nCancelando la Venta");
+                        for (int i = 0; i < 3; i++){
+                            Sleep(1);
+                            printf(". ");
+                        }
+                        printf("\n");
+                       break;
+                    }
+                    if (idAVender != -1){
+                       venderCelulares(cantidadCelulares, datos, marcaCelular, idAVender);
+                    }else {
+                        printf("\nCancelando la Venta");
+                        for (int i = 0; i < 3; i++){
+                            Sleep(1);
+                            printf(". ");
+                        }
+                    }
                 break;
             case 3:
                 printf("Si desea aplicar un filtro, favor introducir S: ");
@@ -166,6 +209,152 @@ void RegistrarCelular (int cantidadCelulares, float datos[cantidadCelulares][5],
         } while (opcion != 'S' && opcion != 'N');
 
     } while (opcion == 'S');
+}
+
+int SelecionarCelularDeUnaLista (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]){
+
+    char marca[25];
+    int idAVender, verificar;
+    int existeMarca = 0;
+    int idValido;
+
+    printf("\nEspeficicar marca: ");
+    getchar();
+    gets(marca);
+    printf("\n");
+
+
+    for (int i = 0; i < cantidadCelulares; i++){    //verifica si hay celulares
+        if (strcasecmp(marca, marcaCelular[i]) == 0 && datos[i][VENTA] == NO_VENDIDO){
+            existeMarca = 1;
+            break;
+        }
+    }
+    if (existeMarca == 0){ //si no hay celulares muestra el mensaje
+        printf("No hay celulares registrados con esa marca o ya fueron vendidos\n");
+        return -1;
+    }
+
+    printf("%-12s %25s %12s %10s %20s\n", "ID", "Marca", "Disco", "RAM", "Precio");
+    printf("--------------------------------------------------------------------------------------------\n");   //imprime la lista con los celulares de la marca selecionada
+
+    for (int i = 0; i < cantidadCelulares; i++){
+        if (strcasecmp(marca, marcaCelular[i]) == 0 && datos[i][VENTA] == NO_VENDIDO){      //comparar si la marca conincide con la introducida con el usuario y imprimir los datos en caso de que si
+            printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",
+                   datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO]);
+        }
+    }
+
+    printf("--------------------------------------------------------------------------------------------\n");
+
+    while (1){  //bucle para validar el ID
+        idValido = 0;
+
+        printf("Favor especificar el ID del celular que desea o -1 para cancelar la compra: ");
+        while (scanf("%d", &idAVender) != 1) {
+            printf("Debe introducir un n%cmero\n", 163);
+            fflush(stdin);
+        }
+
+        if (idAVender == -1){
+            return -1;
+        }
+         for (int i = 0; i < cantidadCelulares; i++){   //Confirma que el ID introducido si este dentro de las opciones de celular con esa marca
+            if (strcasecmp(marca, marcaCelular[i]) == 0 && datos[i][VENTA] == NO_VENDIDO && datos[i][ID] == idAVender){
+                idValido = 1;
+                break;
+            }
+        }
+        if (idValido == 1){ //Salir del bucle para retornar el ID
+            break;
+        }
+        printf("Ese ID no existe dentro de las opciones. Intente de nuevo\n\n");
+    }
+
+    return idAVender;
+
+}
+
+int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]){
+
+    float maxPrecio, minDisco, minRAM;
+    int idAVender, idValido;
+    int encontrados[2];     // Guarda los indices de los 2 mejores celulares
+    int cantEncontrados = 0;
+
+    printf("Favor introducir el m%cnimo permitido para las siguientes caracter%csticas: \n", 161, 161);
+    printf("Mayor Precio Permitido: ");
+    while (scanf("%f", &maxPrecio) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+    printf("Menor ALmacenamiento Permitido(GB): ");             //validar datos y pedir minimos y maximos para buscar las recomendaciones
+    while (scanf("%f", &minDisco) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+    printf("Menor RAM Permitida(GB): ");
+    while (scanf("%f", &minRAM) != 1){
+    printf("Debe introducir un n%cmero: ", 163);
+    fflush(stdin);
+    }
+
+
+
+    for (int i = 0; i < cantidadCelulares; i++){
+
+        if (datos[i][VENTA] == NO_VENDIDO && datos[i][PRECIO] <= maxPrecio && datos[i][DISCO] >= minDisco && datos[i][MEMORIA_RAM] >= minRAM){
+            encontrados[cantEncontrados] = i;
+            cantEncontrados++;
+            if (cantEncontrados == 2) {
+                break;  // detiene el bucle para solo dejar los 2 con estas caracteristicas
+            }
+        }
+    }
+    if (cantEncontrados == 0){      //si ninguno cumple
+        printf("\nNo se encontraron celulares con esas caracter%csticas.\n", 161);
+        return -1;
+    }
+
+    // mostrar los resultados
+    printf("\n%-12s %25s %12s %10s %20s\n", "ID", "Marca", "Disco", "RAM", "Precio");
+    printf("--------------------------------------------------------------------------------------------\n");
+
+    for (int j = 0; j < cantEncontrados; j++){
+        int indiceCelular = encontrados[j];
+        printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",
+            datos[indiceCelular][ID], marcaCelular[indiceCelular], datos[indiceCelular][DISCO],
+            datos[indiceCelular][MEMORIA_RAM], datos[indiceCelular][PRECIO]);
+    }
+
+    printf("--------------------------------------------------------------------------------------------\n");
+
+    while (1){  //bucle para validar el ID
+        printf("Favor especificar el ID del celular que desea o -1 para cancelar la compra: ");
+        while (scanf("%d", &idAVender) != 1) {
+            printf("Debe introducir un n%cmero\n", 163);
+            fflush(stdin);
+        }
+        if (idAVender == -1){
+            return -1;
+        }
+        idValido = 0;
+
+        for (int j = 0; j < cantEncontrados; j++){
+            int indiceCelular = encontrados[j];
+
+            if (datos[indiceCelular][ID] == idAVender){
+                idValido = 1;           //confirmar que el ID introducido esta dentro de las opciones
+                break;
+            }
+        }
+        if (idValido == 1){
+            break;}
+
+        printf("Ese ID no existe dentro de las opciones. Intente de nuevo\n\n");
+    }
+
+    return idAVender;
 }
 
 
