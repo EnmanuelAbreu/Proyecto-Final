@@ -48,7 +48,6 @@ int main(){
                 printf("Si desea aplicar un filtro, favor introducir S: ");
                 scanf(" %c", &aplicarFiltro);
                 ConsultarInventarioCelulares(cantidadCelulares, datos, marcaCelular, aplicarFiltro);
-
                 break;
             case 4:
                 break;
@@ -176,6 +175,7 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
    float montoTotal_Registrado = 0.00;
    float Total_Vendido = 0.00;
    float AlmacenamientoEspecificado = 0, RAMEspecificada = 0, Precio_VentaEspecificado = 0;
+   int VerificacionFiltro = 0;
 
 
 
@@ -196,12 +196,15 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
         printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
         printf("------------------------------------------------------------------------------------------\n");
-
+        int especificacionEncontrada = 0;
         //!Condicion cuando solo se especifica el Almacenamiento
         if((AlmacenamientoEspecificado > 0) && ((RAMEspecificada < 0) && (Precio_VentaEspecificado < 0))){
 
             for(int i = 0; i < cantidadCelulares; i++){
                 if(AlmacenamientoEspecificado == datos[i][DISCO]){
+                    //! Evaluamos si encontro algun celular con esa especificacion
+                    especificacionEncontrada = 1;
+
                     //!Evaluamos si esta vendido o no, y le ponemos su letra correspondiente
                     if(datos[i][VENTA] == VENDIDO){
                         strcpy(letraVendido, "S");
@@ -219,6 +222,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
+            }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
             }
                  //! Condicion cunado se especifica ALmacenamiento y Ram
         }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado < 0)){
@@ -242,6 +248,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
             }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
+            }
                 //!Condicion para cuando se cumple las 3 especificaciones
         }else if((AlmacenamientoEspecificado > 0) && (RAMEspecificada > 0) && (Precio_VentaEspecificado > 0)){
             for(int i = 0; i < cantidadCelulares; i++){
@@ -263,6 +272,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
+            }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
             }
                 //!Condicion cuando se cumple solo la Ram
         }else if((RAMEspecificada > 0) && ((AlmacenamientoEspecificado < 0) || (Precio_VentaEspecificado < 0))){
@@ -286,6 +298,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
             }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
+            }
                 //!Condicion cuando se cumple Ram y Precio
         }else if((RAMEspecificada > 0) && (Precio_VentaEspecificado > 0) && (AlmacenamientoEspecificado < 0)){
             for(int i = 0; i < cantidadCelulares; i++){
@@ -307,6 +322,9 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
+            }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
             }
                 //!Condicion para cuando se cumple solo el Precio
         }else if((Precio_VentaEspecificado > 0) && ((AlmacenamientoEspecificado < 0) || (RAMEspecificada < 0))){
@@ -330,8 +348,11 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
                     printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
                 }
             }
+            if(especificacionEncontrada != 1){
+                printf("No se han encontrado celulares con esa especificaci%cn \n", 162);
+            }
         }
-    }else{
+    }else if(aplicarFiltro == 'n' || aplicarFiltro == 'N'){
         printf("%-6s %9s %20s %10s %15s %12s  \n", "ID", "Marca", "Disco", "RAM", "Precio", "Vendido");
         printf("------------------------------------------------------------------------------------------\n");
         for(int i = 0; i < cantidadCelulares; i++){
@@ -356,9 +377,17 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
                 printf("%-6.0f %9s %20.2f %10.2f %15.2f %12s \n", datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO], letraVendido);
             }
         }
+    }else{
+        VerificacionFiltro = 1;
+        printf("------------------------------------------------------------------------------------------\n");
+        printf("Ingrese S para aplicar filtro o N para no aplicarlo.\n");
     }
     printf("------------------------------------------------------------------------------------------\n");
-    printf("Monto Total Registrado: %25.2f \n", montoTotal_Registrado); 
-    printf("Monto Total Inventario: %25.2f \n", montoTotal_Inventario); 
-    printf("Total Vendido:          %25.2f \n", Total_Vendido); 
+    if(VerificacionFiltro == 0){
+        printf("Monto Total Registrado: %25.2f \n", montoTotal_Registrado); 
+        printf("Monto Total Inventario: %25.2f \n", montoTotal_Inventario); 
+        printf("Total Vendido:          %25.2f \n", Total_Vendido); 
+    }else{
+        printf("\n");
+    }
 }
