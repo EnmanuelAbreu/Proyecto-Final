@@ -357,6 +357,8 @@ int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos
     return idAVender;
 }
 
+void venderCelulares(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], int idAVender){}
+
 
 void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], char aplicarFiltro){
    char letraVendido[5];
