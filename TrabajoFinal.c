@@ -114,6 +114,7 @@ int main(){
             case 4:
                 break;
             case 5:
+                GenerarSolicitudCompraCelulares(cantidadCelulares, datos, marcaCelular);
                 break;
             case 6:
                 printf("\nSaliendo");
@@ -859,4 +860,211 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
     }else{
         printf("\n");
     }
+}
+
+//!Funcion la cual genera una solicitud de compra dependiendo el grupo en el que es clasificado
+void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25]){
+    int cantidadCelulares_Registrado = 0;
+    int CantidadComprar = 0;
+    int GrupoGanadorA = 0, GrupoGanadorB = 0;
+
+    //!Contamos cuantos celulares hay registrados, para crear el arreglo de ese tamaño.
+    for(int i = 0; i < cantidadCelulares; i++){
+        if(datos[i][ID] != 0){
+            cantidadCelulares_Registrado++;
+        }
+    }
+    //!Variables para evaluar el inventario inicial
+    char InventarioInicial[cantidadCelulares_Registrado][25];
+    int ContadorInventario[cantidadCelulares_Registrado];
+    int TotalInventario = 0;
+
+    for(int i = 0; i < cantidadCelulares; i++){
+        int MarcaEncontrada = -1;
+
+        //!Evaluamos dentro del arreglo MarcasGrupoA cuales se repiten
+        for(int j = 0; j < TotalInventario; j++){
+            if(strcmp(marcaCelular[i], InventarioInicial[j]) == 0){
+                MarcaEncontrada = j;
+                break;
+            }
+        }
+
+        //!Si no se repite pues lo guardamos y lo igualamos a uno porque es la primera vez
+        if(MarcaEncontrada == -1){
+            strcpy(InventarioInicial[TotalInventario], marcaCelular[i]);
+            ContadorInventario[TotalInventario] = 1;
+            TotalInventario++;
+        }else{
+            ContadorInventario[MarcaEncontrada]++;
+        }
+    }
+
+    //!Los de Grupo A son aquellos celulares con las caracteristicas(12 - 16GB - 256 - 512GB)
+    int CelularesGrupoA[cantidadCelulares_Registrado];
+    char MarcasGrupoA[cantidadCelulares_Registrado][25];
+    char MarcasUnicasA[cantidadCelulares_Registrado][25];
+    int ContadorMarcasA[cantidadCelulares_Registrado];
+
+    //!Los de Grupo B son aquellos celulares con las caracteristicas(6 - 10GB - 64 - 128GB)
+    int CelularesGrupoB[cantidadCelulares_Registrado];
+    char MarcasGrupoB[cantidadCelulares_Registrado][25];
+    char MarcasUnicasB[cantidadCelulares_Registrado][25];
+    int ContadorMarcasB[cantidadCelulares_Registrado];
+
+    //!Contadores para saber cauntos hay en cada grupo
+    int totalGrupoA = 0;
+    int totalGrupoB = 0;
+
+    for(int i = 0; i< cantidadCelulares; i++){
+        if(datos[i][VENTA] == VENDIDO){
+            //!Evaluar cuales celulares de los vendidos cumple con las caracteristicas del grupo A
+            if(((datos[i][MEMORIA_RAM] >= 12) && (datos[i][MEMORIA_RAM] <=  16)) && ((datos[i][DISCO] >= 256) && (datos[i][DISCO] <= 512))){
+                CelularesGrupoA[cantidadCelulares_Registrado] = i;
+                strcpy(MarcasGrupoA[totalGrupoA], marcaCelular[i]);
+                totalGrupoA++;
+
+                    //!Evaluar cuales celulares de los vendidos cumple con las caracteristicas del grupo B   
+            }else if(((datos[i][MEMORIA_RAM] >= 6) && (datos[i][MEMORIA_RAM] <=  10)) && ((datos[i][DISCO] >= 64) && (datos[i][DISCO] <= 128))){
+                CelularesGrupoB[cantidadCelulares_Registrado] = i;
+                strcpy(MarcasGrupoB[totalGrupoB], marcaCelular[i]);
+                totalGrupoB++;
+            }      
+        }
+    }
+
+    //!Contabilizamos cuantos celulares comrparon de cada marca del GRUPO A
+    int totalUnicasA = 0;
+    for (int i = 0; i < totalUnicasA; i++) {
+        ContadorMarcasA[i] = 0;
+    }
+    for(int i = 0; i < totalGrupoA; i++){
+        int MarcaEncontrada = -1;
+
+        //!Evaluamos dentro del arreglo MarcasGrupoA cuales se repiten
+        for(int j = 0; j < totalUnicasA; j++){
+            if(strcmp(MarcasGrupoA[i], MarcasUnicasA[j]) == 0){
+                MarcaEncontrada = j;
+                break;
+            }
+        }
+
+        //!Si no se repite pues lo guardamos y lo igualamos a uno porque es la primera vez
+        if(MarcaEncontrada == -1){
+            strcpy(MarcasUnicasA[totalUnicasA], MarcasGrupoA[i]);
+            ContadorMarcasA[totalUnicasA] = 1;
+            totalUnicasA++;
+        }else{
+            ContadorMarcasA[MarcaEncontrada]++;
+        }
+    }
+
+    //!Contabilizamos cuantos celulares comrparon de cada marca del GRUPO B
+    int totalUnicasB = 0;
+    for (int i = 0; i < totalUnicasB; i++) {
+        ContadorMarcasB[i] = 0;
+    }
+    for(int i = 0; i < totalGrupoB; i++){
+        int MarcaEncontrada = -1;
+
+        //!Evaluamos dentro del arreglo MarcasGrupoB cuales se repiten
+        for(int j = 0; j < totalUnicasB; j++){
+            if(strcmp(MarcasGrupoB[i], MarcasUnicasB[j]) == 0){
+                MarcaEncontrada = j;
+                break;
+            }
+        }
+
+        //!Si no se repite pues lo guardamos y lo igualamos a uno porque es la primera vez
+        if(MarcaEncontrada == -1){
+            strcpy(MarcasUnicasB[totalUnicasB], MarcasGrupoB[i]);
+            ContadorMarcasB[totalUnicasB] = 1;
+            totalUnicasB++;
+        }else{
+            ContadorMarcasB[MarcaEncontrada]++;
+        }
+    }
+
+    //!Evaluar cual es el grupo ganador en la seccion A
+    for(int i = 0; i < totalUnicasA; i++){
+        if(ContadorMarcasA[i] > ContadorMarcasA[GrupoGanadorA]){
+            GrupoGanadorA = i;
+        }
+    }
+
+    //!Evaluar cual es el grupo ganador en la seccion B
+    for(int i = 0; i < totalUnicasB; i++){
+        if(ContadorMarcasB[i] > ContadorMarcasB[GrupoGanadorB]){
+            GrupoGanadorB = i;
+        }
+    }
+
+    //!Calculamos la venta totales de dcada grupo para usarlo en el porcentaje
+    int ventasTotalesGrupoA = 0;
+    for(int i = 0; i < totalUnicasA; i++){
+        ventasTotalesGrupoA += ContadorMarcasA[i];
+    }
+
+    int ventasTotalesGrupoB = 0;
+    for(int i = 0; i < totalUnicasB; i++){
+        ventasTotalesGrupoB += ContadorMarcasB[i];
+    }
+
+    float PorcentajeA = (ContadorMarcasA[GrupoGanadorA] * 100.0) / ventasTotalesGrupoA;
+    float PorcentajeB = (ContadorMarcasB[GrupoGanadorB] * 100.0) / ventasTotalesGrupoB;
+
+    int CantidadComprarGrupoA = 0;
+    int CantidadComprarGrupoB = 0;
+    //!Si hay mas de uno evaluar la cantidad de lo contrario no hacer nada
+    for(int i = 0; i < totalUnicasA; i++){
+        if(ContadorMarcasA[i] > 1){
+            CantidadComprarGrupoA = (PorcentajeA / 100.0) * (ContadorInventario[GrupoGanadorA]);
+        }
+    }
+    
+    for(int i = 0; i < totalUnicasB; i++){
+        if(ContadorMarcasB[i] > 1){
+            CantidadComprarGrupoB = (PorcentajeB / 100.0) * (ContadorInventario[GrupoGanadorB]);
+        }
+    }
+    
+    printf("******************** S O L I C I T U D   C O M P R A   C E L U L A R E S ********************\n");
+    printf("%-10s %9s %16s %10s\n", "", "Memoria", "", "Cantidad");
+    printf("%-10s %9s %16s %10s\n", "Marca", "RAM", "Almacenamiento", "Comprar");
+    printf("----------------------------------------------------------------------------------------------------\n");
+    //!Evaluamos si se ha realizado alguna compra de este grupo
+    int verificador = 0;
+    int VentaRealizada = 0;
+    for(int i = 0; i < totalUnicasA; i++){
+        if(ContadorMarcasA[i] > 1){
+            VentaRealizada = 1;      
+        }
+    }
+
+    if(VentaRealizada == 0){
+        printf("No se han realizado ventas por el momento.\n");
+        verificador = 1;
+    }else{
+        printf("%-10s %9s %16s %10d\n", MarcasUnicasA[GrupoGanadorA], "12 - 16 GB", "256 - 512 GB", CantidadComprarGrupoA);
+    }
+
+    //!Grupo B
+    VentaRealizada = 0;
+    for(int i = 0; i < totalUnicasB; i++){
+        if(ContadorMarcasB[i] > 1){
+            VentaRealizada = 1;
+            break;
+        }
+    }
+
+    if(VentaRealizada == 0){
+        if(verificador == 0){
+            printf("No se han realizado ventas por el momento del otro grupo.\n");
+        }else{
+            printf("");
+        }
+    }else{
+        printf("%-10s %9s %16s %10d\n", MarcasUnicasB[GrupoGanadorB], "12 - 16 GB", "256 - 512 GB", CantidadComprarGrupoB);
+    }
+    printf("----------------------------------------------------------------------------------------------------\n");
 }
