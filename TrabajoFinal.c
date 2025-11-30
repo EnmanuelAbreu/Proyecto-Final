@@ -916,17 +916,17 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
     int totalGrupoA = 0;
     int totalGrupoB = 0;
 
-    for(int i = 0; i< cantidadCelulares; i++){
+    for(int i = 0; i < cantidadCelulares; i++){
         if(datos[i][VENTA] == VENDIDO){
             //!Evaluar cuales celulares de los vendidos cumple con las caracteristicas del grupo A
             if(((datos[i][MEMORIA_RAM] >= 12) && (datos[i][MEMORIA_RAM] <=  16)) && ((datos[i][DISCO] >= 256) && (datos[i][DISCO] <= 512))){
-                CelularesGrupoA[cantidadCelulares_Registrado] = i;
+                CelularesGrupoA[totalGrupoA] = i;
                 strcpy(MarcasGrupoA[totalGrupoA], marcaCelular[i]);
                 totalGrupoA++;
 
                     //!Evaluar cuales celulares de los vendidos cumple con las caracteristicas del grupo B   
             }else if(((datos[i][MEMORIA_RAM] >= 6) && (datos[i][MEMORIA_RAM] <=  10)) && ((datos[i][DISCO] >= 64) && (datos[i][DISCO] <= 128))){
-                CelularesGrupoB[cantidadCelulares_Registrado] = i;
+                CelularesGrupoB[totalGrupoB] = i;
                 strcpy(MarcasGrupoB[totalGrupoB], marcaCelular[i]);
                 totalGrupoB++;
             }      
@@ -1010,28 +1010,28 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
         ventasTotalesGrupoB += ContadorMarcasB[i];
     }
 
-    float PorcentajeA = (ContadorMarcasA[GrupoGanadorA] * 100.0) / ventasTotalesGrupoA;
-    float PorcentajeB = (ContadorMarcasB[GrupoGanadorB] * 100.0) / ventasTotalesGrupoB;
+    float PorcentajeA = (float)ContadorMarcasA[GrupoGanadorA] / totalGrupoA;
+    float PorcentajeB = (float)ContadorMarcasB[GrupoGanadorB] / totalGrupoB;
 
     int CantidadComprarGrupoA = 0;
     int CantidadComprarGrupoB = 0;
     //!Si hay mas de uno evaluar la cantidad de lo contrario no hacer nada
     for(int i = 0; i < totalUnicasA; i++){
         if(ContadorMarcasA[i] > 1){
-            CantidadComprarGrupoA = (PorcentajeA / 100.0) * (ContadorInventario[GrupoGanadorA]);
+            CantidadComprarGrupoA = (PorcentajeA) * (ContadorInventario[GrupoGanadorA]);
         }
     }
     
     for(int i = 0; i < totalUnicasB; i++){
         if(ContadorMarcasB[i] > 1){
-            CantidadComprarGrupoB = (PorcentajeB / 100.0) * (ContadorInventario[GrupoGanadorB]);
+            CantidadComprarGrupoB = (PorcentajeB) * (ContadorInventario[GrupoGanadorB]);
         }
     }
     
-    printf("******************** S O L I C I T U D   C O M P R A   C E L U L A R E S ********************\n");
-    printf("%-10s %9s %16s %10s\n", "", "Memoria", "", "Cantidad");
-    printf("%-10s %9s %16s %10s\n", "Marca", "RAM", "Almacenamiento", "Comprar");
-    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("******************** S O L I C I T U D   C O M P R A   C E L U L A R E S ********************\n\n");
+    printf("%-15s %15s %19s %15s\n", "", "Memoria", "", "Cantidad");
+    printf("%-15s %15s %19s %15s\n", "Marca", "RAM", "Almacenamiento", "Comprar");
+    printf("--------------    --------------    ----------------    ------------    \n");
     //!Evaluamos si se ha realizado alguna compra de este grupo
     int verificador = 0;
     int VentaRealizada = 0;
@@ -1042,10 +1042,10 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
     }
 
     if(VentaRealizada == 0){
-        printf("No se han realizado ventas por el momento.\n");
+        printf("No hay que reabastecer el inventario por el momento. \n");
         verificador = 1;
     }else{
-        printf("%-10s %9s %16s %10d\n", MarcasUnicasA[GrupoGanadorA], "12 - 16 GB", "256 - 512 GB", CantidadComprarGrupoA);
+        printf("%-15s %15s %19s %15d\n", MarcasUnicasA[GrupoGanadorA], "12 - 16 GB", "256 - 512 GB", CantidadComprarGrupoA);
     }
 
     //!Grupo B
@@ -1059,12 +1059,12 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
     if(VentaRealizada == 0){
         if(verificador == 0){
-            printf("No se han realizado ventas por el momento del otro grupo.\n");
+            printf("No hay que reabastecer el inventario por el momento.\n");
         }else{
             printf("");
         }
     }else{
-        printf("%-10s %9s %16s %10d\n", MarcasUnicasB[GrupoGanadorB], "12 - 16 GB", "256 - 512 GB", CantidadComprarGrupoB);
+        printf("%-15s %15s %19s %15d\n", MarcasUnicasB[GrupoGanadorB], "6 - 10 GB", "64 - 128 GB", CantidadComprarGrupoB);
     }
-    printf("----------------------------------------------------------------------------------------------------\n");
+    printf("--------------    --------------    ----------------    ------------    \n");
 }
