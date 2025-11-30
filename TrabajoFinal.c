@@ -935,9 +935,6 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
     //!Contabilizamos cuantos celulares comrparon de cada marca del GRUPO A
     int totalUnicasA = 0;
-    for (int i = 0; i < totalUnicasA; i++) {
-        ContadorMarcasA[i] = 0;
-    }
     for(int i = 0; i < totalGrupoA; i++){
         int MarcaEncontrada = -1;
 
@@ -961,9 +958,6 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
 
     //!Contabilizamos cuantos celulares comrparon de cada marca del GRUPO B
     int totalUnicasB = 0;
-    for (int i = 0; i < totalUnicasB; i++) {
-        ContadorMarcasB[i] = 0;
-    }
     for(int i = 0; i < totalGrupoB; i++){
         int MarcaEncontrada = -1;
 
@@ -999,34 +993,33 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
         }
     }
 
-    //!Calculamos la venta totales de dcada grupo para usarlo en el porcentaje
-    int ventasTotalesGrupoA = 0;
-    for(int i = 0; i < totalUnicasA; i++){
-        ventasTotalesGrupoA += ContadorMarcasA[i];
-    }
-
-    int ventasTotalesGrupoB = 0;
-    for(int i = 0; i < totalUnicasB; i++){
-        ventasTotalesGrupoB += ContadorMarcasB[i];
-    }
-
-    float PorcentajeA = (float)ContadorMarcasA[GrupoGanadorA] / totalGrupoA;
-    float PorcentajeB = (float)ContadorMarcasB[GrupoGanadorB] / totalGrupoB;
-
-    int CantidadComprarGrupoA = 0;
-    int CantidadComprarGrupoB = 0;
-    //!Si hay mas de uno evaluar la cantidad de lo contrario no hacer nada
-    for(int i = 0; i < totalUnicasA; i++){
-        if(ContadorMarcasA[i] > 1){
-            CantidadComprarGrupoA = (PorcentajeA) * (ContadorInventario[GrupoGanadorA]);
+    //! Buscar el inventario inicial de la marca ganadora del Grupo A
+    int inventarioInicialMarcaGanadoraA = 0;
+    for(int j = 0; j < TotalInventario; j++){
+            //!Buscamos la marca ganadora en el inventario, cuyando encuentre el nombre tomara la cantidad del inventario de esa marca
+        if(strcmp(MarcasUnicasA[GrupoGanadorA], InventarioInicial[j]) == 0){
+            inventarioInicialMarcaGanadoraA = ContadorInventario[j];
+            break;
         }
     }
+
+    //!Realizamos los calculos para saber cuanto es el porcentaje y la cantidad a comprar
+    float PorcentajeA = (float)ContadorMarcasA[GrupoGanadorA] / inventarioInicialMarcaGanadoraA;
+    int CantidadComprarGrupoA = PorcentajeA * inventarioInicialMarcaGanadoraA;
     
-    for(int i = 0; i < totalUnicasB; i++){
-        if(ContadorMarcasB[i] > 1){
-            CantidadComprarGrupoB = (PorcentajeB) * (ContadorInventario[GrupoGanadorB]);
+    //! Buscar el inventario inicial de la marca ganadora del Grupo B
+    int inventarioInicialMarcaGanadoraB = 0;
+    for(int j = 0; j < TotalInventario; j++){
+            //!Buscamos la marca ganadora en el inventario, cuyando encuentre el nombre tomara la cantidad del inventario de esa marca
+        if(strcmp(MarcasUnicasB[GrupoGanadorB], InventarioInicial[j]) == 0){
+            inventarioInicialMarcaGanadoraB = ContadorInventario[j];
+            break;
         }
     }
+
+    //!Realizamos los calculos para saber cuanto es el porcentaje y la cantidad a comprar
+    float PorcentajeB = (float)ContadorMarcasB[GrupoGanadorB] / inventarioInicialMarcaGanadoraB;
+    int CantidadComprarGrupoB = PorcentajeB * inventarioInicialMarcaGanadoraB;
     
     printf("******************** S O L I C I T U D   C O M P R A   C E L U L A R E S ********************\n\n");
     printf("%-15s %15s %19s %15s\n", "", "Memoria", "", "Cantidad");
@@ -1036,7 +1029,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
     int verificador = 0;
     int VentaRealizada = 0;
     for(int i = 0; i < totalUnicasA; i++){
-        if(ContadorMarcasA[i] > 1){
+        if(ContadorMarcasA[i] != 0){
             VentaRealizada = 1;      
         }
     }
@@ -1051,7 +1044,7 @@ void GenerarSolicitudCompraCelulares (int cantidadCelulares, float datos[cantida
     //!Grupo B
     VentaRealizada = 0;
     for(int i = 0; i < totalUnicasB; i++){
-        if(ContadorMarcasB[i] > 1){
+        if(ContadorMarcasB[i] != 0){
             VentaRealizada = 1;
             break;
         }
