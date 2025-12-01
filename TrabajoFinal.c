@@ -112,6 +112,7 @@ int main(){
                 ConsultarInventarioCelulares(cantidadCelulares, datos, marcaCelular, aplicarFiltro);
                 break;
             case 4:
+                ConsultaVentasXMarca(cantidadCelulares, datos, marcaCelular);
                 break;
             case 5:
                 GenerarSolicitudCompraCelulares(cantidadCelulares, datos, marcaCelular);
@@ -860,6 +861,147 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
     }else{
         printf("\n");
     }
+}
+
+//!FUNCION LA CUAL CONSULTA LA VENTA POR LA MARCA, MEMORIA RAM Y ALMACENAMIENTO
+void ConsultaVentasXMarca (int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25])
+{
+    //verificar que el usuario primero haya registrado los celulares
+    if(cantidadCelulares == 0)
+    {
+        printf("No puede consultar Ventas X Marca sin registrar los celulares!!!");
+        return;
+    }
+
+    // Contar cuántos celulares están registrados realmente
+    int celularesRegistrados = 0;
+    for(int i = 0; i < cantidadCelulares; i++)
+    {
+        if(datos[i][ID] != 0)
+        {
+            celularesRegistrados++;
+        }
+    }
+
+    // Extraer marcas únicas de celulares vendidos
+    char marcasUnicas[celularesRegistrados][25];
+    int totalMarcas = 0;
+
+    for(int i = 0; i < cantidadCelulares; i++)
+    {
+        if(datos[i][VENTA] == VENDIDO)
+        {
+            int marcaExiste = 0;
+            // Verificar si la marca ya está en el arreglo de marcas únicas
+            for(int j = 0; j < totalMarcas; j++)
+            {
+                if(strcasecmp(marcaCelular[i], marcasUnicas[j]) == 0)
+                {
+                    marcaExiste = 1;
+                    break;
+                }
+            }
+            // Si la marca no existe, agregarla
+            if(marcaExiste == 0)
+            {
+                strcpy(marcasUnicas[totalMarcas], marcaCelular[i]);
+                totalMarcas++;
+            }
+        }
+    }
+
+    // Si no hay ventas registradas
+    if(totalMarcas == 0)
+    {
+        printf("\nNo hay ventas registradas para mostrar.\n");
+        return;
+    }
+
+    // Crear matriz para almacenar ventas por marca y rangos
+    // [marca][rango] donde rango: 0 = RAM 6-10, 1 = RAM 12-16, 2 = DISCO 64-128, 3 = DISCO 256-512
+    float ventasPorMarca[totalMarcas][4];
+
+    // Inicializar matriz en 0
+    for(int i = 0; i < totalMarcas; i++)
+    {
+        for(int j = 0; j < 4; j++)
+        {
+            ventasPorMarca[i][j] = 0.0;
+        }
+    }
+
+    // Calcular las ventas por marca y rango
+    for(int i = 0; i < cantidadCelulares; i++)
+    {
+        if(datos[i][VENTA] == VENDIDO)
+        {
+            // Encontrar el índice de la marca
+            int indiceMarca = -1;
+            for(int j = 0; j < totalMarcas; j++)
+            {
+                if(strcasecmp(marcaCelular[i], marcasUnicas[j]) == 0)
+                {
+                    indiceMarca = j;
+                    break;
+                }
+            }
+
+            if(indiceMarca != -1)
+            {
+                // Verificar rango de RAM 6-10
+                if(datos[i][MEMORIA_RAM] >= 6 && datos[i][MEMORIA_RAM] <= 10)
+                {
+                    ventasPorMarca[indiceMarca][0] += datos[i][PRECIO];
+                }
+                // Verificar rango de RAM 12-16
+                if(datos[i][MEMORIA_RAM] >= 12 && datos[i][MEMORIA_RAM] <= 16)
+                {
+                    ventasPorMarca[indiceMarca][1] += datos[i][PRECIO];
+                }
+                // Verificar rango de DISCO 64-128
+                if(datos[i][DISCO] >= 64 && datos[i][DISCO] <= 128)
+                {
+                    ventasPorMarca[indiceMarca][2] += datos[i][PRECIO];
+                }
+                // Verificar rango de DISCO 256-512
+                if(datos[i][DISCO] >= 256 && datos[i][DISCO] <= 512)
+                {
+                    ventasPorMarca[indiceMarca][3] += datos[i][PRECIO];
+                }
+            }
+        }
+    }
+
+    // Calcular totales generales
+    float totalRAM_6_10 = 0.0;
+    float totalRAM_12_16 = 0.0;
+    float totalDISCO_64_128 = 0.0;
+    float totalDISCO_256_512 = 0.0;
+
+    for(int i = 0; i < totalMarcas; i++)
+    {
+        totalRAM_6_10 += ventasPorMarca[i][0];
+        totalRAM_12_16 += ventasPorMarca[i][1];
+        totalDISCO_64_128 += ventasPorMarca[i][2];
+        totalDISCO_256_512 += ventasPorMarca[i][3];
+    }
+
+    // Imprimir el reporte
+    printf("\n\n***** V E N T A  D E  C E L U L A R E S  X  M A R C A *****\n");
+    printf("%43s %31s \n", "MEMORIA RAM(GB)", "ALMACENAMIENTO(GB)");
+    printf("%49s %30s \n", "----------------------------", "----------------------------");
+    printf("%31s %14s %16s %14s \n", "6 - 10", "12 - 16", "64 - 128", "256 - 512");
+    printf("%34s %14s %15s %14s \n", "-------------", "-------------", "-------------","-------------");
+
+    // Imprimir datos por marca
+    for(int i = 0; i < totalMarcas; i++)
+    {
+        printf("%20s %13.2f %14.2f %15.2f %14.2f\n", marcasUnicas[i], ventasPorMarca[i][0], ventasPorMarca[i][1], ventasPorMarca[i][2], ventasPorMarca[i][3]);
+    }
+    printf("%34s %14s %15s %14s \n", "-------------", "-------------", "-------------","-------------");
+
+    // Imprimir totales generales
+    printf("%19s %14.2f %14.2f %15.2f %14.2f\n", "Total General:", totalRAM_6_10, totalRAM_12_16, totalDISCO_64_128, totalDISCO_256_512);
 }
 
 //!Funcion la cual genera una solicitud de compra dependiendo el grupo en el que es clasificado
