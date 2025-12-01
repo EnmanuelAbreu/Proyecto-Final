@@ -4,6 +4,16 @@
         "ctype.h": "c",
         "compare": "c",
         "cmath": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "bit": "c",
+        "cctype": "c",
+        "concepts": "c",
+        "cstdarg": "c",
+        "cstdlib": "c",
+        "type_traits": "c",
+        "limits": "c",
+        "new": "c",
+        "cstdint": "c",
+        "typeinfo": "c"
     }
 }

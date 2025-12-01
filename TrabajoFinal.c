@@ -175,7 +175,7 @@ void RegistrarCelular(int cantidadCelulares, float datos[cantidadCelulares][5], 
     //en caso de que ya se hayan resgistrado la cantidad de celulares que el usuario ingreso y quiera seguir poniendo mas/
     if(registrados >= cantidadCelulares)
     {
-        printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",161);
+        printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",160);
         return;
     }
     //bucle para resgisgrar los celulares/
@@ -198,6 +198,12 @@ void RegistrarCelular(int cantidadCelulares, float datos[cantidadCelulares][5], 
             {
                 printf("Entrada inv%clida. Debe ingresar un n%cmero para el ID.\n", 160, 163);
                 int ch; while ((ch = getchar()) != '\n' && ch != EOF); // limpiar buffer
+                continue;
+            }
+            //Verificar que el ID sea un numero positivo
+            if(idTemporal <= 0)
+            {
+                printf("ID no puede ser un n%cmero negativo.\n",163);
                 continue;
             }
             //Verificar que el ID no este repetido/
@@ -363,7 +369,7 @@ void RegistrarCelular(int cantidadCelulares, float datos[cantidadCelulares][5], 
             //en caso de que ya el usuario haya resgistrado la cantidad maxima de celulares permitidos/
             if(registrados >= cantidadCelulares)
             {
-                printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",161);
+                printf("\nYa ha registrado el m%cximo de celulares permitidos.\n",160);
                 return;
             }
             continue;
