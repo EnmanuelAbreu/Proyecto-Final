@@ -594,11 +594,12 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
     if(aplicarFiltro == 's' || aplicarFiltro == 'S'){
         //! Titulos de la funcion
         printf("A continuaci%cn especificar los datos por los que desea filtrar. \n", 162);
-        printf("**** Si no desea filtrar por alguno de ellos, especificar -1. **** \n");
-
+        printf("\n**** Si no desea filtrar por alguno de ellos, especificar -1. **** \n");
         //!Especificaciones para el filtrado
         printf("Almacenamiento(GB): ");
         ValidarEntrada = scanf("%f", &AlmacenamientoEspecificado);
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
         if(ValidarEntrada != 1){
             printf("Acaba de ingresar una especificaci%cn inv%clida. Por favor intentar otra vez. \n", 162, 160);
             return;
@@ -606,6 +607,7 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
         printf("Memoria RAM(GB): ");
         ValidarEntrada = scanf("%f", &RAMEspecificada);
+        while ((c = getchar()) != '\n' && c != EOF);
         if(ValidarEntrada != 1){
             printf("Acaba de ingresar una especificaci%cn inv%clida. Por favor intentar otra vez. \n", 162, 160);
             return;
@@ -613,6 +615,7 @@ void ConsultarInventarioCelulares (int cantidadCelulares, float datos[cantidadCe
 
         printf("Precio Venta: ");
         ValidarEntrada = scanf("%f", &Precio_VentaEspecificado);
+        while ((c = getchar()) != '\n' && c != EOF);
         if(ValidarEntrada != 1){
             printf("Acaba de ingresar una especificaci%cn inv%clida. Por favor intentar otra vez. \n", 162, 160);
             return;
