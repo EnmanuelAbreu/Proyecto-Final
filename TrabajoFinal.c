@@ -407,8 +407,7 @@ int SelecionarCelularDeUnaLista (int cantidadCelulares, float datos[cantidadCelu
 
     for (int i = 0; i < cantidadCelulares; i++){
         if (strcasecmp(marca, marcaCelular[i]) == 0 && datos[i][VENTA] == NO_VENDIDO){      //comparar si la marca conincide con la introducida con el usuario y imprimir los datos en caso de que si
-            printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",
-                   datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO]);
+            printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",datos[i][ID], marcaCelular[i], datos[i][DISCO], datos[i][MEMORIA_RAM], datos[i][PRECIO]);
         }
     }
 
@@ -490,9 +489,7 @@ int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos
 
     for (int j = 0; j < cantEncontrados; j++){
         int indiceCelular = encontrados[j];
-        printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",
-            datos[indiceCelular][ID], marcaCelular[indiceCelular], datos[indiceCelular][DISCO],
-            datos[indiceCelular][MEMORIA_RAM], datos[indiceCelular][PRECIO]);
+        printf("%-12.0f %25s %12.2f %10.2f %20.2f\n",datos[indiceCelular][ID], marcaCelular[indiceCelular], datos[indiceCelular][DISCO],datos[indiceCelular][MEMORIA_RAM], datos[indiceCelular][PRECIO]);
     }
 
     printf("--------------------------------------------------------------------------------------------\n");
@@ -528,8 +525,8 @@ int RecomendarUnCelulaBasadoEnSusPreferencias(int cantidadCelulares, float datos
 //!Funcion que realiza la venta de los celulares
 void venderCelulares(int cantidadCelulares, float datos[cantidadCelulares][5], char marcaCelular [cantidadCelulares][25], int idAVender){
 
-    char confirmar;
-    int indice = -1;
+    char confirmar; //variable que confirma la compra
+    int indice = -1; //variable a la que se le asigna la posicion del ID introducidp
 
     for (int i = 0; i < cantidadCelulares; i++){    //bucle para buscar en que posicion esta en ID del celular a vender
         if (datos[i][ID] == idAVender){
